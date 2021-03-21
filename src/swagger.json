@@ -1,0 +1,282 @@
+{
+    "openapi":"3.0.0",
+    "info":{
+        "title": "Atlas",
+        "description": "Essa é uma documentação para o Atlas API",
+        "version":"1.0.0",
+        "contact":{
+            "email":"brunopetrolini@hotmail.com"
+        }
+    },
+    "tags": [
+        {
+            "name": "users",
+            "description": "Gerenciamento de usuários"
+        }
+    ],
+    "paths":{
+        "/users":{
+            "post":{
+                "tags":["users"],
+                "summary":"Criar um novo usuário",
+                "description":"Cria um novo usuário",
+                "requestBody":{
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type":"object",
+                                "properties":{
+                                    "name":{
+                                        "type":"string"
+                                    },
+                                    "email":{
+                                        "type":"string"
+                                    }
+                                },
+                                "example":{
+                                    "name":"John Doe",
+                                    "email":"johndoe@mail.com"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "201":{
+                        "description":"created",
+                            "content":{
+                                "application/json":{
+                                    "schema":{
+                                        "$ref":"#/definitions/user"
+                                    }
+                                }
+                            }
+                    },
+                    "400":{
+                        "description":"user already exists",
+                            "content":{
+                                "application/json":{
+                                    "schema":{
+                                        "type":"object",
+                                        "properties":{
+                                            "error":{
+                                                "type":"string"
+                                            }
+                                       },
+                                       "example":{
+                                            "error": "User already exists."
+                                       }
+                                    }
+                                }
+                            }
+                    }
+                }
+
+            },
+            "get":{
+                "tags":["users"],
+                "summary":"Retorna todos os usuários",
+                "description":"Somente usuários `admin` tem permissão de acesso",
+                "parameters":[{
+                    "name":"user_id",
+                    "in":"header",
+                    "required":true,
+                    "schema":{
+                        "type":"string"
+                    }
+                }],
+                "responses":{
+                    "200":{
+                        "description":"Sucesso",
+                            "content":{
+                                "application/json":{
+                                    "schema":{
+                                        "type":"array",
+                                        "items":{
+                                            "type":"object",
+                                            "$ref":"#/definitions/user"
+                                        }
+                                    }
+                                }
+                            }
+                    },
+                    "400":{
+                        "description":"O usuário não tem permissão",
+                            "content":{
+                                "application/json":{
+                                    "schema":{
+                                        "type":"object",
+                                        "properties":{
+                                            "error":{
+                                                "type":"string"
+                                            }
+                                       },
+                                       "example":{
+                                            "error": "User doesn't have permission"
+                                       }
+                                    }
+                                }
+                            }
+                    }
+                }
+
+            }
+        },
+        "/users/{user_id}":{
+            "get":{
+                "tags":["users"],
+                "summary": "Retorna um usuário específico",
+                "description":"Retorna todas a informações de um usuário específico",
+                "parameters":[
+                    {
+                        "name":"user_id",
+                        "in":"path",
+                        "required":true,
+                        "description":"UUID do usuário",
+                        "schema":{
+                            "type":"string"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"Sucesso",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/definitions/user"
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"O usuário não foi encontrado",
+                            "content":{
+                                "application/json":{
+                                    "schema":{
+                                        "type":"object",
+                                        "properties":{
+                                            "error":{
+                                                "type":"string"
+                                            }
+                                       },
+                                       "example":{
+                                            "error": "User not found."
+                                       }
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}/admin":{
+            "patch":{
+                "tags":["users"],
+                "summary": "Alterar a permissão do usuário para admin",
+                "description":"Transforma um usuário específico em `admin`",
+                "parameters":[
+                    {
+                        "name":"user_id",
+                        "in":"path",
+                        "required":true,
+                        "description":"UUID do usuário",
+                        "schema":{
+                            "type":"string"
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"Sucesso",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "properties":{
+                                        "admin":{
+                                            "type":"boolean",
+                                            "example":true
+                                        },
+                                        "id":{
+                                            "type":"string",
+                                            "example":"5f6d77ff-9a54-4d7d-a876-94dc3d12f21f"
+                                        },
+                                        "name":{
+                                            "type":"string",
+                                            "example":"user name sample"
+                                        },
+                                        "email":{
+                                            "type":"string",
+                                            "example":"useremailsample@mail.com"
+                                        },
+                                        "created_at":{
+                                            "type":"dateString",
+                                            "example":"2021-03-21T19:31:50.318Z"
+                                        },
+                                        "updated_at":{
+                                            "type":"dateString",
+                                            "example":"2021-03-21T19:57:47.267Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404":{
+                        "description":"O usuário não foi encontrado",
+                            "content":{
+                                "application/json":{
+                                    "schema":{
+                                        "type":"object",
+                                        "properties":{
+                                            "error":{
+                                                "type":"string"
+                                            }
+                                       },
+                                       "example":{
+                                            "error": "User not found."
+                                       }
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "user":{
+            "type": "object",
+            "properties": {
+                "admin": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "id": {
+                    "type": "string",
+                    "example": "39af04ed-a9d1-4455-95c8-3761149b4a33"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "johndoe@mail.com"
+                },
+                "created_at": {
+                    "type": "dateString",
+                    "example": "2021-03-21T19:31:50.318Z"
+                },
+                "updated_at": {
+                    "type": "dateString",
+                    "example": "2021-03-21T19:31:50.318Z"
+                }
+            },
+            "xml": {
+                "name": "user"
+            }
+        }
+    }
+}
